@@ -59,7 +59,7 @@
 
 Windows 用 python，Linux/macOS 用 python3。
 
-`bash
+```bash
 # 自动发现本机常见会话日志目录
 python3 scripts/yotta_logs.py locate
 
@@ -83,7 +83,7 @@ python3 scripts/yotta_logs.py tools --dir /path/to/sessions
 
 # JSON 结构化输出（适合程序化核对）
 python3 scripts/yotta_logs.py search "部署方案" --dir /path/to/sessions --json
-`
+```
 
 退出码语义（与元安 / 元审 / 元盾 / 元真家族一致）：0 = 成功；1 = 无匹配 / 空结果集；4 = 用法错误 / 致命异常。
 
@@ -94,21 +94,21 @@ python3 scripts/yotta_logs.py search "部署方案" --dir /path/to/sessions --js
 三种方式任选其一，技能文件统一从 **npm** 获取（GitHub 无代理时较慢，npm 可配国内镜像加速）。
 
 ### 方式一：npm（推荐，一行安装）
-`bash
+```bash
 # 国内加速（可选）：npm config set registry https://registry.npmmirror.com
 npx -y @yottameta/yotta-logs -g
 npx -y @yottameta/yotta-logs --dir <你的技能目录>   # 任意智能体：指定目录安装
-`
+```
 > 智能体不在预置列表里？用 --dir 指定它的 skills 目录，或手动复制（方式三）。--list 可查看各智能体对应的默认目录。想手动拿文件也可 npm pack @yottameta/yotta-logs 解包后按方式二/三安装。
 
 ### 方式二：install.sh 一键安装
 获取技能文件夹后（npm pack 解包或 git clone），进入技能文件夹：
-`bash
+```bash
 bash install.sh -g    # 用户级；bash install.sh --list 查看全部目录
 bash install.sh --agent codex   # 指定智能体（--list 可查看可用项）
 bash install.sh       # 项目级：自动检测已存在的 .claude/.cursor/.codex 等 skills 目录
 bash install.sh --dir /path/to/skills
-`
+```
 > 覆盖 17 类智能体，含国内 Trae / Qwen / Comate / CodeBuddy / Kimi。Windows 用户：装有 Git Bash 即可用；否则用方式三手动复制。
 
 ### 方式三：手动复制
@@ -140,15 +140,15 @@ bash install.sh --dir /path/to/skills
 
 1. 将本仓库的 SKILL.md 接入任意 AI 智能体的技能/规则系统（见上方安装）。
 2. 用户问「上次说的部署方案是什么」时，先定位并检索：
-   `bash
+   ```bash
    python3 scripts/yotta_logs.py locate
    python3 scripts/yotta_logs.py search "部署方案" --dir <日志目录>
-   `
+   ```
    得到命中时间线（会话 / 时间 / 角色 / 原文片段）。
 3. 需要完整上下文时提取对应会话：
-   `bash
+   ```bash
    python3 scripts/yotta_logs.py session <会话ID> --dir <日志目录>
-   `
+   ```
 4. 需要精确出处时用 --json 拿会话 ID / 行号 / 时间戳，回答时给出依据。
 5. 需要回顾某次会话成本或工具使用分布时用 stats / tools。
 

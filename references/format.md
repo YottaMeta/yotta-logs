@@ -21,13 +21,13 @@
 
 可选，把别名映射到会话 ID。两种形态均可：
 
-`json
+```json
 { "微信-部署": "a1", "ci-排查": "b2" }
-`
+```
 
-`json
+```json
 [ { "key": "微信-部署", "sessionId": "a1" } ]
-`
+```
 
 search / session / stats / tools 的 `--session` / `-s` 参数同时接受会话 ID 与别名。
 

@@ -27,7 +27,7 @@ license: MIT
 
 Windows 用 python，Linux/macOS 用 python3。
 
-`bash
+```bash
 # 自动发现本机常见会话日志目录
 python3 scripts/yotta_logs.py locate
 
@@ -48,7 +48,7 @@ python3 scripts/yotta_logs.py stats --dir /path/to/sessions --daily
 
 # 工具调用排行
 python3 scripts/yotta_logs.py tools --dir /path/to/sessions
-`
+```
 
 退出码（与元安 / 元审 / 元盾 / 元真家族一致）：0 = 成功；1 = 无匹配 / 空结果集；4 = 用法错误 / 致命异常。
 
