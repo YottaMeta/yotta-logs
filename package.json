@@ -1,0 +1,32 @@
+{
+  "name": "@yottameta/yotta-logs",
+  "version": "0.1.0",
+  "description": "元史 —— 跨智能体的历史会话日志检索技能：零依赖检索 / 分析会话 JSONL 记录，回溯旧对话与父会话上下文，为跨会话追溯提供原始日志依据。触发：用户问起先前聊过的内容 / 父会话 / 历史上下文、要查以前说过的结论、跨会话回溯某次讨论、需要从会话日志定位某段决策时。边界：仅读取本机自己的会话日志文件；不修改、不删除会话记录；只查本地日志不联网上传。",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "yotta-logs"
+  ],
+  "files": [
+    "SKILL.md",
+    "LICENSE",
+    "README.md",
+    "install.sh",
+    "references",
+    "scripts",
+    "assets",
+    "bin",
+    "NOTICE",
+    "CHANGELOG.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YottaMeta/yotta-logs.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bin": {
+    "yotta-logs": "bin/install.js"
+  }
+}
