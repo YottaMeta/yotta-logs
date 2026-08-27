@@ -1,12 +1,14 @@
+<p align="center"><b>Language</b>: English · <a href="./README.zh-CN.md">中文</a></p>
+
 <p align="center">
   <img src="assets/banner.png" alt="yotta-logs banner" width="100%" />
 </p>
 
-<h1 align="center">yotta-logs · 元史</h1>
+<h1 align="center">yotta-logs · 元史 (Yuanshi)</h1>
 
-<p align="center">YottaMeta 自有的历史会话 / 记忆日志检索技能：<b>零依赖检索 / 分析 JSONL、JSON、SQLite、Markdown 多格式记录</b>，回溯旧对话与父会话上下文，为跨会话追溯提供原始日志依据。适用于查以前说过的结论、定位某段决策、回顾某次讨论。</p>
-<p align="center">用户引用先前聊过的内容 / 父会话 / 历史上下文时自动激活——<b>不依赖 jq / rg，纯标准库确定性检索</b>。</p>
-<p align="center">纯 Python 3.8+ 标准库实现，零外部依赖；Windows + Linux + macOS 通用；只读本地日志，默认脱敏，不联网上传。</p>
+<p align="center">YottaMeta's skill for retrieving and analyzing <b>historical session / memory logs across AI agents</b>: zero-dependency search over JSONL, JSON, SQLite and Markdown records to recall past conversations and parent-session context with original-log evidence.</p>
+<p align="center">Activates when the user references previous content / a parent session / historical context — <b>no jq / rg needed; pure standard-library deterministic retrieval</b>.</p>
+<p align="center">Pure Python 3.8+ standard library, zero external dependencies; Windows + Linux + macOS; read-only local logs, redacted by default, never uploaded.</p>
 
 <p align="center">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue" /></a>
@@ -17,116 +19,115 @@
   <a href="https://github.com/YottaMeta/yotta-logs"><img alt="PRs welcome" src="https://img.shields.io/badge/PRs-welcome-brightgreen" /></a>
 </p>
 
-## 这是什么
+## What it is
 
-智能体每天产生大量会话与记忆记录（JSONL / 单文件 JSON / SQLite / Markdown…），跨会话追溯时最缺的不是「记得发生过」，而是「原文在哪、谁说的、什么时候说的」。元史把这些记录做成**确定性检索引擎**：全源登记日志与记忆位置 → 按关键词 / 正则 / 日期 / 会话 / 角色 / 来源 / 类型 / 格式检索 → 提取会话原文 → 统计消息、token、成本与工具调用。
+Agents generate a steady stream of session and memory records (JSONL / single-file JSON / SQLite / Markdown…). When tracing across sessions, the hard part is rarely "remembering that something happened" — it is finding *where the original text is, who said it, and when*. Yuanshi turns those records into a **deterministic retrieval engine**: discover every log and memory source → search by keyword / regex / date / session / role / source / kind / format → extract raw conversation → summarize messages, tokens, cost and tool usage.
 
-它不是某个平台的专属功能，而是一份与智能体无关的工具包：装进任何支持 Agent Skills 的智能体即可按需调用。全程零依赖、只读本地、不联网；输出默认脱敏，避免把日志里的密钥 / token 带到上下文。
+It is not tied to any single platform: it is an agent-agnostic toolkit that works in any agent supporting Agent Skills. Zero dependencies, read-only local access, no network; output is redacted by default so secrets and tokens in logs never leak into context.
 
-## 核心价值
+## Core value
 
-- **零依赖检索**：Python 3.8+ 标准库，不依赖 jq / rg / ripgrep 等外部工具，Windows + Linux + macOS 开箱即用。
-- **多格式通用（v0.2.0）**：不再只认 JSONL——按「格式族 × 字段别名归一 + 配置兜底」适配 JSONL / 单文件 JSON / SQLite（opencode、Cursor state.vscdb 等）/ Markdown（记忆 md + 自由笔记）/ 二进制（只读标题），统一 Record 模型，引擎零改动接入怪格式。
-- **全源登记**：`locate` / discover 自动发现本机常见日志与记忆源（Codex / Claude Code / Clawdbot / opencode / Gemini / yotta-memory / Codex 笔记…），按默认检索范围过滤。
-- **容错解析**：坏行 / 坏字段自动跳过并计数，不中断检索；二进制 / 加密文件只回退标题不崩。
-- **默认脱敏**：输出自动打码疑似密钥 / token / 口令（sk-、ghp_、AKIA、JWT、Bearer、URL 口令、key=value 赋值、超长 token），--no-redact 关闭。
-- **多维度过滤**：关键词（不区分大小写）/ 正则 / 日期 / 会话 ID / sessions.json 别名 / 角色（user / assistant / tool / system / developer）/ 来源（--source）/ 类型（--kind）/ 格式（--format）。
-- **结构化输出**：--json 输出纯净 JSON，含来源、会话 ID、行号、时间戳、角色，适合程序化核对出处。
-- **只读安全**：只读本地日志与记忆文件，不修改、不删除、不联网上传，与元忆（语义记忆）互补分工。
+- **Zero-dependency retrieval** — Python 3.8+ standard library; no jq / rg / ripgrep; works out of the box on Windows + Linux + macOS.
+- **Multi-format (v0.2.0)** — not JSONL-only anymore: JSONL / single-file JSON / SQLite (opencode, Cursor state.vscdb…) / Markdown (memory + free notes) / binary (title-only) via "format family × field-alias normalization + config fallback", on a unified Record model.
+- **Full source discovery** — `locate` / discover finds common local log and memory sources (Codex / Claude Code / Clawdbot / opencode / Gemini / yotta-memory / Codex notes…), filtered by the default search scope.
+- **Fault-tolerant parsing** — bad lines and fields are skipped and counted, never aborting a search; binary / encrypted files degrade to titles.
+- **Redacted by default** — output masks likely secrets / tokens / credentials (sk-, ghp_, AKIA, JWT, Bearer, URL passwords, key=value assignments, over-long tokens); disable with --no-redact.
+- **Multi-dimensional filtering** — keyword (case-insensitive) / regex / date / session ID / sessions.json alias / role (user / assistant / tool / system / developer) / source (--source) / kind (--kind) / format (--format).
+- **Structured output** — --json emits clean JSON with source, session ID, line number, timestamp and role, ideal for programmatic provenance checks.
+- **Read-only & safe** — reads local logs and memory files only; never modifies, deletes or uploads; complements yotta-memory (semantic memory).
 
-## 核心优势
+## Why use it
 
-| 优势 | 说明 |
+| Advantage | Description |
 |---|---|
-| **零依赖** | Python 3.8+ 标准库，无模型、无数据库、无外部服务；Windows + Linux + macOS 通用 |
-| **多格式** | JSONL / JSON / SQLite / Markdown / 二进制五大格式族，字段别名归一 + 配置兜底 |
-| **确定性** | 检索逻辑可复现、可解释；命中即原文片段 + 行号，不靠模型猜测 |
-| **默认脱敏** | 疑似密钥 / token / 口令自动打码，降低日志原文外泄风险 |
-| **默认范围** | 会话源 + 结构化记忆源默认开；自由笔记 / 二进制日志默认关，可显式开 |
-| **容错** | 不同智能体的存储形态差异可容忍，坏行跳过不中断，加密文件只回退标题 |
-| **定位准确** | 命中结果带来源 / 会话 ID / 行号 / 时间戳 / 角色，可精确回溯出处 |
-| **生态分发** | GitHub + npm + ClawHub 三源同步发布；npx / install.sh / 手动复制三种安装方式 |
+| **Zero dependency** | Python 3.8+ standard library; no model, database or external service; Windows + Linux + macOS |
+| **Multi-format** | JSONL / JSON / SQLite / Markdown / binary; field-alias normalization + config fallback |
+| **Deterministic** | Reproducible, explainable logic; hits return original fragments + line numbers, no model guessing |
+| **Redacted by default** | Likely secrets / tokens / credentials masked automatically |
+| **Default scope** | Session + structured memory sources on by default; free notes / binary logs off unless explicitly enabled |
+| **Fault-tolerant** | Tolerates storage differences across agents; bad lines skipped without aborting; encrypted files fall back to titles |
+| **Pinpoint provenance** | Hits carry source / session ID / line / timestamp / role for exact tracing |
+| **Ecosystem distribution** | GitHub + npm + ClawHub synced; install via npx / install.sh / manual copy |
 
-## 功能体系
+## Commands
 
-| 命令 | 说明 |
+| Command | Description |
 |---|---|
-| locate | 全源登记：发现本机所有日志 / 记忆源（来源 / 格式 / 类型 / 默认开关） |
-| scan | 列出所有会话（跨源）：来源 / 会话 ID / 日期 / 消息数 / 大小 / 别名 |
-| search | 跨源检索：关键词 / 正则 + 日期 / 会话 / 角色 / 来源 / 类型 / 格式过滤，输出时间线命中（--json 结构化） |
-| session | 提取单个会话原文：时间线 + 角色 + 文本，--role 过滤，--tools 标注工具调用 |
-| stats | 会话统计：消息 / 角色分布 / token / 成本 / 时间范围 / 分源（--daily 每日汇总） |
-| tools | 工具调用次数排行 |
-| version | 打印版本 |
+| locate | Discover all local log / memory sources (source / format / kind / default on-off) |
+| scan | List all sessions across sources (source / session ID / date / message count / size / alias) |
+| search | Cross-source search: keyword / regex + date / session / role / source / kind / format filters; timeline hits (--json structured) |
+| session | Extract one session's raw text (timeline + role + text); --role filter, --tools annotate tool calls |
+| stats | Session statistics: messages / role distribution / token / cost / time range / per-source (--daily daily rollup) |
+| tools | Tool-call frequency ranking |
+| version | Print version |
 
-## 快速使用
+## Quick start
 
-Windows 用 python，Linux/macOS 用 python3。
+On Windows use `python`; on Linux/macOS use `python3`.
 
 ```bash
-# 全源登记：发现本机所有日志 / 记忆源
+# Discover all local log / memory sources
 python3 scripts/yotta_logs.py locate
 
-# 跨源检索关键词（默认范围 = 会话 + 结构化记忆；自由笔记默认关）
-python3 scripts/yotta_logs.py search "部署方案"
+# Cross-source keyword search (default scope = session + structured memory; free notes off)
+python3 scripts/yotta_logs.py search "deployment plan"
 
-# 指定目录 / 文件（目录自动嗅探格式族）
+# Target a directory / file (format family auto-sniffed)
 python3 scripts/yotta_logs.py scan --dir ~/.clawdbot/agents/<agentId>/sessions
 
-# 正则 + 日期 + 会话过滤
-python3 scripts/yotta_logs.py search "CI 失败" --regex --date 2026-08-26 --dir /path/to/sessions
+# Regex + date + session filters
+python3 scripts/yotta_logs.py search "CI failed" --regex --date 2026-08-26 --dir /path/to/sessions
 
-# 按来源 / 类型 / 格式过滤（来源名见 locate）
-python3 scripts/yotta_logs.py search "记住" --kind memory
+# Filter by source / kind / format (source names from locate)
+python3 scripts/yotta_logs.py search "remember" --kind memory
 python3 scripts/yotta_logs.py search "XSS" --source opencode-db
-python3 scripts/yotta_logs.py search "部署" --format sqlite
+python3 scripts/yotta_logs.py search "deploy" --format sqlite
 
-# 自由笔记显式开（默认关）
-python3 scripts/yotta_logs.py search "推送闸门" --kind note
+# Explicitly enable free notes (off by default)
+python3 scripts/yotta_logs.py search "push gate" --kind note
 
-# 提取单个会话原文
+# Extract a single session's raw text
 python3 scripts/yotta_logs.py session abc123 --dir /path/to/sessions
 
-# 统计（消息 / token / 成本 / 每日汇总）
+# Statistics (messages / tokens / cost / daily rollup)
 python3 scripts/yotta_logs.py stats --dir /path/to/sessions --daily
 
-# 工具调用排行
+# Tool-call ranking
 python3 scripts/yotta_logs.py tools --dir /path/to/sessions
 
-# JSON 结构化输出（适合程序化核对）
-python3 scripts/yotta_logs.py search "部署方案" --dir /path/to/sessions --json
+# JSON structured output (for programmatic checks)
+python3 scripts/yotta_logs.py search "deployment plan" --dir /path/to/sessions --json
 ```
 
-退出码语义（与元安 / 元审 / 元盾 / 元真家族一致）：0 = 成功；1 = 无匹配 / 空结果集；4 = 用法错误 / 致命异常。
+Exit codes (consistent with the YottaMeta family): 0 = success; 1 = no match / empty result; 4 = usage error / fatal exception.
 
-未指定 --dir 时，依次尝试环境变量 YOTTA_LOGS_DIR → discover 全源登记（locate 逻辑）并按默认检索范围过滤；找不到则退出码 4 并提示。
+When --dir is omitted, the engine tries $YOTTA_LOGS_DIR, then full source discovery (locate logic) filtered by the default scope; if nothing is found it exits 4 with a hint.
 
-## 安装
+## Installation
 
-三种方式任选其一，技能文件统一从 **npm** 获取（GitHub 无代理时较慢，npm 可配国内镜像加速）。
+Three options — skill files always come from **npm** (GitHub can be slow without a proxy; npm supports mirrors).
 
-### 方式一：npm（推荐，一行安装）
+### Option 1: npm (recommended, one-liner)
 ```bash
-# 国内加速（可选）：npm config set registry https://registry.npmmirror.com
 npx -y @yottameta/yotta-logs -g
-npx -y @yottameta/yotta-logs --dir <你的技能目录>   # 任意智能体：指定目录安装
+npx -y @yottameta/yotta-logs --dir /path/to/skills   # any agent: install to a specific directory
 ```
-> 智能体不在预置列表里？用 --dir 指定它的 skills 目录，或手动复制（方式三）。--list 可查看各智能体对应的默认目录。想手动拿文件也可 npm pack @yottameta/yotta-logs 解包后按方式二/三安装。
+> Agent not in the preset list? Point --dir at its skills directory, or copy manually (Option 3). --list shows each agent's default directory. You can also `npm pack @yottameta/yotta-logs` and unpack the tarball.
 
-### 方式二：install.sh 一键安装
-获取技能文件夹后（npm pack 解包或 git clone），进入技能文件夹：
+### Option 2: install.sh one-liner
+From inside the skill folder (npm pack or git clone):
 ```bash
-bash install.sh -g    # 用户级；bash install.sh --list 查看全部目录
-bash install.sh --agent codex   # 指定智能体（--list 可查看可用项）
-bash install.sh       # 项目级：自动检测已存在的 .claude/.cursor/.codex 等 skills 目录
+bash install.sh -g    # user-level; bash install.sh --list shows all directories
+bash install.sh --agent codex   # specific agent (--list shows available entries)
+bash install.sh       # project-level: auto-detect existing .claude/.cursor/.codex skills dirs
 bash install.sh --dir /path/to/skills
 ```
-> 覆盖 17 类智能体，含国内 Trae / Qwen / Comate / CodeBuddy / Kimi。Windows 用户：装有 Git Bash 即可用；否则用方式三手动复制。
+> Covers 17 agents including Trae / Qwen / Comate / CodeBuddy / Kimi. On Windows, Git Bash is sufficient; otherwise use Option 3.
 
-### 方式三：手动复制
-把整个 yotta-logs 文件夹复制到目标智能体的 skills 目录。常见位置（用户级；Windows 用 %USERPROFILE%，Linux/macOS 用 ~）：
+### Option 3: manual copy
+Copy the whole `yotta-logs` folder into the target agent's skills directory. Common locations (user-level; %USERPROFILE% on Windows, ~ on Linux/macOS):
 
-| 智能体 | 用户级目录 | 项目级目录 |
+| Agent | User-level dir | Project-level dir |
 |---|---|---|
 | Codex | %USERPROFILE%\.codex\skills\yotta-logs\ | .codex\skills\ |
 | Claude Code | %USERPROFILE%\.claude\skills\yotta-logs\ | .claude\skills\ |
@@ -139,42 +140,43 @@ bash install.sh --dir /path/to/skills
 | Kiro | %USERPROFILE%\.kiro\skills\yotta-logs\ | .kiro\skills\ |
 | WorkBuddy | %USERPROFILE%\.workbuddy\skills\yotta-logs\ | .workbuddy\skills\ |
 | Trae Code CLI | %USERPROFILE%\.traecli\skills\yotta-logs\ | .traecli\skills\ |
-| Trae IDE（国内） | %USERPROFILE%\.trae-cn\skills\yotta-logs\ | .trae\skills\ |
+| Trae IDE (CN) | %USERPROFILE%\.trae-cn\skills\yotta-logs\ | .trae\skills\ |
 | Qwen Code | %USERPROFILE%\.qwen\skills\yotta-logs\ | .qwen\skills\ |
 | Comate | %USERPROFILE%\.comate\skills\yotta-logs\ | .comate\skills\ |
 | CodeBuddy | %USERPROFILE%\.codebuddy\skills\yotta-logs\ | .codebuddy\skills\ |
 | Kimi | %USERPROFILE%\.kimi\skills\yotta-logs\ | .kimi\skills\ |
-| 通用 AGENTS.md | %USERPROFILE%\.agents\skills\yotta-logs\ | .agents\skills\ |
+| Generic AGENTS.md | %USERPROFILE%\.agents\skills\yotta-logs\ | .agents\skills\ |
 
-> Codex 默认目录若设置了环境变量 CODEX_HOME，以该变量为准；opencode 若设置 XDG_CONFIG_HOME 同理。.agents\skills 并非通用目录，仅 OpenCode / Cursor / Cline / Amp / Kimi / Gemini CLI / GitHub Copilot 等会读取，Claude Code 与 Codex 默认不读。不确定时用 --dir 指定，或让该智能体自行安装。
+> If CODEX_HOME is set, Codex's default directory follows it; same for XDG_CONFIG_HOME with opencode. Note that .agents\skills is not universal — only OpenCode / Cursor / Cline / Amp / Kimi / Gemini CLI / GitHub Copilot etc. read it; Claude Code and Codex do not by default. When in doubt, use --dir or let the agent install itself.
 
-## 使用示例（AI 智能体）
+## Usage with an AI agent
 
-1. 将本仓库的 SKILL.md 接入任意 AI 智能体的技能/规则系统（见上方安装）。
-2. 用户问「上次说的部署方案是什么」时，先定位并检索：
+1. Wire this repo's SKILL.md into any agent's skills / rules system (see Installation above).
+2. When the user asks "what was that deployment plan we discussed?", locate and search:
    ```bash
    python3 scripts/yotta_logs.py locate
-   python3 scripts/yotta_logs.py search "部署方案"
+   python3 scripts/yotta_logs.py search "deployment plan"
    ```
-   得到命中时间线（来源 / 会话 / 时间 / 角色 / 原文片段）。
-3. 需要完整上下文时提取对应会话：
+   You get a timeline of hits (source / session / time / role / raw fragment).
+3. For full context, extract the session:
    ```bash
-   python3 scripts/yotta_logs.py session <会话ID> --dir <日志目录>
+   python3 scripts/yotta_logs.py session <sessionId> --dir <logs directory>
    ```
-4. 需要精确出处时用 --json 拿来源 / 会话 ID / 行号 / 时间戳，回答时给出依据。
-5. 需要回顾某次会话成本或工具使用分布时用 stats / tools。
+4. For exact provenance, use --json to get source / session ID / line number / timestamp and cite it in your answer.
+5. To review a session's cost or tool-use distribution, use stats / tools.
 
-## 开发与校验
+## Development & validation
 
-- 测试：python scripts/test_yotta_logs.py（139 项，含 75 项 v0.1.0 回归 + 64 项 v0.2.0 通用化用例）
-- 基础校验：python tools/validate-skill.py yotta-logs（在仓库根目录运行）
-- 格式普查：references/agent-formats.md；统一格式：references/format.md；CLI 协议：references/cli.md；安全边界：references/security.md
+- Tests: `python scripts/test_yotta_logs.py` (139 cases: 75 v0.1.0 regression + 64 v0.2.0 generalization)
+- Basic validation: `python tools/validate-skill.py yotta-logs` (run from the repository root)
+- Format registry: references/agent-formats.md; unified format: references/format.md; CLI protocol: references/cli.md; security boundary: references/security.md
 
-## 更新日志
+## Changelog
 
-- v0.2.0（2026-08-27）：多格式通用化——JSONL / 单文件 JSON / SQLite（opencode 等）/ Markdown（记忆 + 自由笔记）/ 二进制五大格式族，统一 Record + 字段别名归一 + 配置兜底，discover 全源登记，新增 --source / --kind / --format 过滤与默认检索范围（会话 + 结构化记忆开、自由笔记 / 二进制日志关）。详见 CHANGELOG.md。
-- v0.1.0（2026-08-27）：首版——零依赖 JSONL 会话日志检索引擎（locate / scan / search / session / stats / tools / version + 默认脱敏 + sessions.json 别名 + 只读）。
+- v0.2.1 (2026-08-27): Bilingual documentation — English README as the GitHub / npm / ClawHub homepage, full Chinese doc moved to README.zh-CN.md, English npm description.
+- v0.2.0 (2026-08-27): Multi-format generalization — JSONL / single-file JSON / SQLite (opencode etc.) / Markdown (memory + free notes) / binary; unified Record + field-alias normalization + config fallback; discover; new --source / --kind / --format filters and default search scope (session + structured memory on, free notes / binary logs off). See CHANGELOG.md.
+- v0.1.0 (2026-08-27): Initial release — zero-dependency JSONL session log search engine (locate / scan / search / session / stats / tools / version + default redaction + sessions.json alias + read-only).
 
-## 许可证
+## License
 
-MIT © YottaMeta —— 详见 [LICENSE](./LICENSE)。
+MIT © YottaMeta — see [LICENSE](./LICENSE).
