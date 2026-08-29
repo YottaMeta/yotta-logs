@@ -47,7 +47,7 @@ It is not tied to any single platform: it is an agent-agnostic toolkit that work
 | **Default scope** | Session + structured memory sources on by default; free notes / binary logs off unless explicitly enabled |
 | **Fault-tolerant** | Tolerates storage differences across agents; bad lines skipped without aborting; encrypted files fall back to titles |
 | **Pinpoint provenance** | Hits carry source / session ID / line / timestamp / role for exact tracing |
-| **Ecosystem distribution** | GitHub + npm + ClawHub synced; install via npx / install.sh / manual copy |
+| **Ecosystem distribution** | GitHub + npm + ClawHub synced; four install methods (npx / git clone / Download ZIP / install.sh) |
 
 ## Commands
 
@@ -105,50 +105,39 @@ When --dir is omitted, the engine tries $YOTTA_LOGS_DIR, then full source discov
 
 ## Installation
 
-Three options — skill files always come from **npm** (GitHub can be slow without a proxy; npm supports mirrors).
+Pick any of the four methods below; the order is the recommended priority. Skill files always come from **npm** (GitHub can be slow without a proxy; npm supports mirrors).
 
-### Option 1: npm (recommended, one-liner)
-```bash
-npx -y @yottameta/yotta-logs -g
-npx -y @yottameta/yotta-logs --dir /path/to/skills   # any agent: install to a specific directory
+### Method 1: npm one-liner (recommended)
+
+```text
+# Optional China mirror: npm config set registry https://registry.npmmirror.com
+npx -y @yottameta/yotta-logs --agent <agent-name>      # install to the agent's default user-level skills dir
+npx -y @yottameta/yotta-logs --dir <your-skills-dir>   # point to the skills dir itself (e.g. ~/.codex/skills)
 ```
-> Agent not in the preset list? Point --dir at its skills directory, or copy manually (Option 3). --list shows each agent's default directory. You can also `npm pack @yottameta/yotta-logs` and unpack the tarball.
 
-### Option 2: install.sh one-liner
-From inside the skill folder (npm pack or git clone):
-```bash
-bash install.sh -g    # user-level; bash install.sh --list shows all directories
-bash install.sh --agent codex   # specific agent (--list shows available entries)
-bash install.sh       # project-level: auto-detect existing .claude/.cursor/.codex skills dirs
-bash install.sh --dir /path/to/skills
+- `--agent <name>` installs to that agent's default user-level directory; `--list` shows each agent's default directory.
+- `--dir <path>` installs to the given directory; for agents not in the preset list, point `--dir` at their skills directory.
+- If the mirror has not synced the new package (404): add `--registry=https://registry.npmjs.org/` (a proxy may be needed in China), or wait for the mirror cache.
+
+### Method 2: git clone (developers / git available)
+
+```text
+git clone https://github.com/YottaMeta/yotta-logs.git <your-skills-dir>/yotta-logs
 ```
-> Covers 17 agents including Trae / Qwen / Comate / CodeBuddy / Kimi. On Windows, Git Bash is sufficient; otherwise use Option 3.
 
-### Option 3: manual copy
-Copy the whole `yotta-logs` folder into the target agent's skills directory. Common locations (user-level; %USERPROFILE% on Windows, ~ on Linux/macOS):
+### Method 3: GitHub Download ZIP (manual / no git)
 
-| Agent | User-level dir | Project-level dir |
-|---|---|---|
-| Codex | %USERPROFILE%\.codex\skills\yotta-logs\ | .codex\skills\ |
-| Claude Code | %USERPROFILE%\.claude\skills\yotta-logs\ | .claude\skills\ |
-| Cursor | %USERPROFILE%\.cursor\skills\yotta-logs\ | .cursor\skills\ |
-| Windsurf | %USERPROFILE%\.codeium\windsurf\skills\yotta-logs\ | .windsurf\skills\ |
-| opencode | %USERPROFILE%\.config\opencode\skills\yotta-logs\ | .opencode\skills\ |
-| Gemini | %USERPROFILE%\.gemini\skills\yotta-logs\ | .gemini\skills\ |
-| Goose | %USERPROFILE%\.config\goose\skills\yotta-logs\ | .goose\skills\ |
-| Amp | %USERPROFILE%\.config\agents\skills\yotta-logs\ | .agents\skills\ |
-| Kiro | %USERPROFILE%\.kiro\skills\yotta-logs\ | .kiro\skills\ |
-| WorkBuddy | %USERPROFILE%\.workbuddy\skills\yotta-logs\ | .workbuddy\skills\ |
-| Trae Code CLI | %USERPROFILE%\.traecli\skills\yotta-logs\ | .traecli\skills\ |
-| Trae IDE (CN) | %USERPROFILE%\.trae-cn\skills\yotta-logs\ | .trae\skills\ |
-| Qwen Code | %USERPROFILE%\.qwen\skills\yotta-logs\ | .qwen\skills\ |
-| Comate | %USERPROFILE%\.comate\skills\yotta-logs\ | .comate\skills\ |
-| CodeBuddy | %USERPROFILE%\.codebuddy\skills\yotta-logs\ | .codebuddy\skills\ |
-| Kimi | %USERPROFILE%\.kimi\skills\yotta-logs\ | .kimi\skills\ |
-| Generic AGENTS.md | %USERPROFILE%\.agents\skills\yotta-logs\ | .agents\skills\ |
+On the GitHub repository `YottaMeta/yotta-logs`, click **Code → Download ZIP**, unzip it and put the `yotta-logs` folder into the agent's skills directory.
 
-> If CODEX_HOME is set, Codex's default directory follows it; same for XDG_CONFIG_HOME with opencode. Note that .agents\skills is not universal — only OpenCode / Cursor / Cline / Amp / Kimi / Gemini CLI / GitHub Copilot etc. read it; Claude Code and Codex do not by default. When in doubt, use --dir or let the agent install itself.
+### Method 4: install.sh (multi-agent one-liner script)
 
+```text
+bash install.sh --agent <name>   # install to the agent's default user-level directory
+bash install.sh --dir <path>     # install to the given directory
+bash install.sh --list           # list agents -> default directories
+```
+
+> Method 1 uses the npm registry (npmmirror / npmjs) and does not depend on GitHub; Methods 2/3 use GitHub and may fail without a proxy in China.
 ## Usage with an AI agent
 
 1. Wire this repo's SKILL.md into any agent's skills / rules system (see Installation above).
@@ -172,6 +161,8 @@ Copy the whole `yotta-logs` folder into the target agent's skills directory. Com
 - Format registry: references/agent-formats.md; unified format: references/format.md; CLI protocol: references/cli.md; security boundary: references/security.md
 
 ## Changelog
+
+- v0.2.2 (2026-08-29): Install docs alignment — unified four install methods (npx -y @yottameta/yotta-logs --agent/--dir, git clone, GitHub Download ZIP, install.sh --agent/--dir/--list), removed the legacy GitHub-clone installer and global-install (-g) recommendations; bilingual README install section synced to 发布规范 §3.3.1. No functional change.
 
 - v0.2.1 (2026-08-27): Bilingual documentation — English README as the GitHub / npm / ClawHub homepage, full Chinese doc moved to README.zh-CN.md, English npm description.
 - v0.2.0 (2026-08-27): Multi-format generalization — JSONL / single-file JSON / SQLite (opencode etc.) / Markdown (memory + free notes) / binary; unified Record + field-alias normalization + config fallback; discover; new --source / --kind / --format filters and default search scope (session + structured memory on, free notes / binary logs off). See CHANGELOG.md.

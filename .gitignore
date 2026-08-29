@@ -9,3 +9,6 @@ node_modules/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# .github/workflows 不入库（PAT 无 workflow scope，2026-08-29 续17 追加）
+.github/workflows/

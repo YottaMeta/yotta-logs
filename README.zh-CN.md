@@ -47,7 +47,7 @@
 | **默认范围** | 会话源 + 结构化记忆源默认开；自由笔记 / 二进制日志默认关，可显式开 |
 | **容错** | 不同智能体的存储形态差异可容忍，坏行跳过不中断，加密文件只回退标题 |
 | **定位准确** | 命中结果带来源 / 会话 ID / 行号 / 时间戳 / 角色，可精确回溯出处 |
-| **生态分发** | GitHub + npm + ClawHub 三源同步发布；npx / install.sh / 手动复制三种安装方式 |
+| **生态分发** | GitHub + npm + ClawHub 三源同步发布；npx / git clone / Download ZIP / install.sh 四种安装方式 |
 
 ## 功能体系
 
@@ -105,51 +105,39 @@ python3 scripts/yotta_logs.py search "部署方案" --dir /path/to/sessions --js
 
 ## 安装
 
-三种方式任选其一，技能文件统一从 **npm** 获取（GitHub 无代理时较慢，npm 可配国内镜像加速）。
+以下四种方式任选，顺序即推荐优先级；技能文件一律从 **npm** 获取（GitHub 无代理较慢，npm 支持镜像）。
 
-### 方式一：npm（推荐，一行安装）
-```bash
-# 国内加速（可选）：npm config set registry https://registry.npmmirror.com
-npx -y @yottameta/yotta-logs -g
-npx -y @yottameta/yotta-logs --dir <你的技能目录>   # 任意智能体：指定目录安装
+### 方式一：npm 一行装（推荐）
+
+```text
+# 可选国内加速：npm config set registry https://registry.npmmirror.com
+npx -y @yottameta/yotta-logs --agent <智能体名称>      # 装到指定智能体默认用户级技能目录
+npx -y @yottameta/yotta-logs --dir <智能体的技能目录>  # 指到技能目录本身（如 ~/.codex/skills）
 ```
-> 智能体不在预置列表里？用 --dir 指定它的 skills 目录，或手动复制（方式三）。--list 可查看各智能体对应的默认目录。想手动拿文件也可 npm pack @yottameta/yotta-logs 解包后按方式二/三安装。
 
-### 方式二：install.sh 一键安装
-获取技能文件夹后（npm pack 解包或 git clone），进入技能文件夹：
-```bash
-bash install.sh -g    # 用户级；bash install.sh --list 查看全部目录
-bash install.sh --agent codex   # 指定智能体（--list 可查看可用项）
-bash install.sh       # 项目级：自动检测已存在的 .claude/.cursor/.codex 等 skills 目录
-bash install.sh --dir /path/to/skills
+- `--agent <name>` 自动装到该智能体默认用户级目录；`--list` 可查看各智能体默认目录。
+- `--dir <路径>` 装到指定的技能目录；未收录的智能体用 `--dir` 指到它的技能目录。
+- npmmirror 未同步新包（404）：加 `--registry=https://registry.npmjs.org/`（国内需代理），或稍等镜像缓存。
+
+### 方式二：git clone（开发者 / 有 git 环境）
+
+```text
+git clone https://github.com/YottaMeta/yotta-logs.git <智能体的技能目录>/yotta-logs
 ```
-> 覆盖 17 类智能体，含国内 Trae / Qwen / Comate / CodeBuddy / Kimi。Windows 用户：装有 Git Bash 即可用；否则用方式三手动复制。
 
-### 方式三：手动复制
-把整个 yotta-logs 文件夹复制到目标智能体的 skills 目录。常见位置（用户级；Windows 用 %USERPROFILE%，Linux/macOS 用 ~）：
+### 方式三：GitHub 下载压缩包（手动 / 无 git 环境）
 
-| 智能体 | 用户级目录 | 项目级目录 |
-|---|---|---|
-| Codex | %USERPROFILE%\.codex\skills\yotta-logs\ | .codex\skills\ |
-| Claude Code | %USERPROFILE%\.claude\skills\yotta-logs\ | .claude\skills\ |
-| Cursor | %USERPROFILE%\.cursor\skills\yotta-logs\ | .cursor\skills\ |
-| Windsurf | %USERPROFILE%\.codeium\windsurf\skills\yotta-logs\ | .windsurf\skills\ |
-| opencode | %USERPROFILE%\.config\opencode\skills\yotta-logs\ | .opencode\skills\ |
-| Gemini | %USERPROFILE%\.gemini\skills\yotta-logs\ | .gemini\skills\ |
-| Goose | %USERPROFILE%\.config\goose\skills\yotta-logs\ | .goose\skills\ |
-| Amp | %USERPROFILE%\.config\agents\skills\yotta-logs\ | .agents\skills\ |
-| Kiro | %USERPROFILE%\.kiro\skills\yotta-logs\ | .kiro\skills\ |
-| WorkBuddy | %USERPROFILE%\.workbuddy\skills\yotta-logs\ | .workbuddy\skills\ |
-| Trae Code CLI | %USERPROFILE%\.traecli\skills\yotta-logs\ | .traecli\skills\ |
-| Trae IDE（国内） | %USERPROFILE%\.trae-cn\skills\yotta-logs\ | .trae\skills\ |
-| Qwen Code | %USERPROFILE%\.qwen\skills\yotta-logs\ | .qwen\skills\ |
-| Comate | %USERPROFILE%\.comate\skills\yotta-logs\ | .comate\skills\ |
-| CodeBuddy | %USERPROFILE%\.codebuddy\skills\yotta-logs\ | .codebuddy\skills\ |
-| Kimi | %USERPROFILE%\.kimi\skills\yotta-logs\ | .kimi\skills\ |
-| 通用 AGENTS.md | %USERPROFILE%\.agents\skills\yotta-logs\ | .agents\skills\ |
+在 GitHub 仓库 `YottaMeta/yotta-logs` 点 **Code → Download ZIP**，解压后把 `yotta-logs` 文件夹放进智能体技能目录。
 
-> Codex 默认目录若设置了环境变量 CODEX_HOME，以该变量为准；opencode 若设置 XDG_CONFIG_HOME 同理。.agents\skills 并非通用目录，仅 OpenCode / Cursor / Cline / Amp / Kimi / Gemini CLI / GitHub Copilot 等会读取，Claude Code 与 Codex 默认不读。不确定时用 --dir 指定，或让该智能体自行安装。
+### 方式四：install.sh（多智能体一键脚本）
 
+```text
+bash install.sh --agent <name>   # 装到指定智能体默认用户级目录
+bash install.sh --dir <path>     # 装到指定目录
+bash install.sh --list           # 列出智能体 -> 默认目录
+```
+
+> 方式一走 npm 源（npmmirror / npmjs），不依赖 GitHub；方式二 / 三走 GitHub，国内无代理可能失败。
 ## 使用示例（AI 智能体）
 
 1. 将本仓库的 SKILL.md 接入任意 AI 智能体的技能/规则系统（见上方安装）。
@@ -173,6 +161,8 @@ bash install.sh --dir /path/to/skills
 - 格式普查：references/agent-formats.md；统一格式：references/format.md；CLI 协议：references/cli.md；安全边界：references/security.md
 
 ## 更新日志
+
+- v0.2.2（2026-08-29）：安装方式统一为四方式（对齐发布规范 §3.3.1）——方式一 npx -y @yottameta/yotta-logs --agent / --dir（推荐，走 npm 源）；方式二 git clone；方式三 GitHub Download ZIP；方式四 bash install.sh --agent/--dir/--list。移除旧式 GitHub 克隆安装器与全局安装（-g）推荐；中英 README 安装节同步。无功能变更。
 
 - v0.2.0（2026-08-27）：多格式通用化——JSONL / 单文件 JSON / SQLite（opencode 等）/ Markdown（记忆 + 自由笔记）/ 二进制五大格式族，统一 Record + 字段别名归一 + 配置兜底，discover 全源登记，新增 --source / --kind / --format 过滤与默认检索范围（会话 + 结构化记忆开、自由笔记 / 二进制日志关）。详见 CHANGELOG.md。
 - v0.1.0（2026-08-27）：首版——零依赖 JSONL 会话日志检索引擎（locate / scan / search / session / stats / tools / version + 默认脱敏 + sessions.json 别名 + 只读）。
