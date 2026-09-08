@@ -162,11 +162,17 @@ bash install.sh --list           # list agents -> default directories
 
 ## Changelog
 
+- v0.3.0 (2026-09-08): Evaluation-driven refinement — added FAQ, hardened installer error handling and exit codes, and added installer tests.
+
 - v0.2.2 (2026-08-29): Install docs alignment — unified four install methods (npx -y @yottameta/yotta-logs --agent/--dir, git clone, GitHub Download ZIP, install.sh --agent/--dir/--list), removed the legacy GitHub-clone installer and global-install (-g) recommendations; bilingual README install section synced to 发布规范 §3.3.1. No functional change.
 
 - v0.2.1 (2026-08-27): Bilingual documentation — English README as the GitHub / npm / ClawHub homepage, full Chinese doc moved to README.zh-CN.md, English npm description.
 - v0.2.0 (2026-08-27): Multi-format generalization — JSONL / single-file JSON / SQLite (opencode etc.) / Markdown (memory + free notes) / binary; unified Record + field-alias normalization + config fallback; discover; new --source / --kind / --format filters and default search scope (session + structured memory on, free notes / binary logs off). See CHANGELOG.md.
 - v0.1.0 (2026-08-27): Initial release — zero-dependency JSONL session log search engine (locate / scan / search / session / stats / tools / version + default redaction + sessions.json alias + read-only).
+
+## References
+
+- references/faq.md
 
 ## License
 

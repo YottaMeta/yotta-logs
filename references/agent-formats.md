@@ -120,7 +120,7 @@
 
 引擎零改动即可接入怪格式（个别 agent 私有 schema 用列映射接入）。
 
-## 六、默认检索范围（2026-08-27 老张拍板）
+## 六、默认检索范围
 
 - 会话源（kind=session）+ 结构化记忆源（kind=memory）**默认开**；
 - 自由笔记（kind=note）与二进制日志（kind=log）**默认关**，可 `--kind note` / `--kind log` 显式开；

@@ -162,10 +162,16 @@ bash install.sh --list           # 列出智能体 -> 默认目录
 
 ## 更新日志
 
+- v0.3.0（2026-09-08）：评测驱动完善——新增常见问题，安装器错误处理与退出码加固，并补齐安装器测试。
+
 - v0.2.2（2026-08-29）：安装方式统一为四方式（对齐发布规范 §3.3.1）——方式一 npx -y @yottameta/yotta-logs --agent / --dir（推荐，走 npm 源）；方式二 git clone；方式三 GitHub Download ZIP；方式四 bash install.sh --agent/--dir/--list。移除旧式 GitHub 克隆安装器与全局安装（-g）推荐；中英 README 安装节同步。无功能变更。
 
 - v0.2.0（2026-08-27）：多格式通用化——JSONL / 单文件 JSON / SQLite（opencode 等）/ Markdown（记忆 + 自由笔记）/ 二进制五大格式族，统一 Record + 字段别名归一 + 配置兜底，discover 全源登记，新增 --source / --kind / --format 过滤与默认检索范围（会话 + 结构化记忆开、自由笔记 / 二进制日志关）。详见 CHANGELOG.md。
 - v0.1.0（2026-08-27）：首版——零依赖 JSONL 会话日志检索引擎（locate / scan / search / session / stats / tools / version + 默认脱敏 + sessions.json 别名 + 只读）。
+
+## 参考文档
+
+- references/faq.md
 
 ## 许可证
 
