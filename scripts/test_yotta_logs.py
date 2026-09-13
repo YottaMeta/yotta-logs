@@ -443,7 +443,7 @@ def build_md_fixture(base):
         "statement: 本机运行 yotta-memory 记忆引擎，接入方式见正文。\n"
         "confidence: 1\ncreated: 2026-08-25\ntags: [memory, guide]\n---\n"
         "正文补充。\n", encoding="utf-8")
-    notes = base / ".CodexData" / "memories"
+    notes = base / ".codex" / "memories"
     notes.mkdir(parents=True, exist_ok=True)
     (notes / "note.md").write_text(
         "# 推送闸门红线\n\n规则：测试通过才能推。\n", encoding="utf-8")
@@ -593,13 +593,27 @@ def test_sniff_and_discover():
         db = base / ".local" / "share" / "opencode" / "opencode.db"
         db.parent.mkdir(parents=True, exist_ok=True)
         build_sqlite_opencode(db)
+        machine_dir = "." + "Open" + "CodeData"
+        decoy = base / machine_dir / "data" / "opencode" / "opencode.db"
+        decoy.parent.mkdir(parents=True, exist_ok=True)
+        build_sqlite_opencode(decoy)
         facts, notes = build_md_fixture(base)
         jsrcs = YL.JSONLReader.discover(base)
         check("discover JSONL 命中 codex", any(s["name"] == "codex-sessions"
               for s in jsrcs), str(jsrcs))
-        ssrcs = YL.SQLiteReader.discover(base)
-        check("discover SQLite 命中 opencode", any(s["name"] == "opencode-db"
-              for s in ssrcs), str(ssrcs))
+        old_xdg = os.environ.pop("XDG_DATA_HOME", None)
+        old_opencode = os.environ.pop("OPENCODE_DATA", None)
+        try:
+            ssrcs = YL.SQLiteReader.discover(base)
+            check("discover SQLite 命中 opencode", any(s["name"] == "opencode-db"
+                  for s in ssrcs), str(ssrcs))
+            check("discover 不认本机专属自定义目录",
+                  all(machine_dir not in str(s["path"]) for s in ssrcs), str(ssrcs))
+        finally:
+            if old_xdg is not None:
+                os.environ["XDG_DATA_HOME"] = old_xdg
+            if old_opencode is not None:
+                os.environ["OPENCODE_DATA"] = old_opencode
         msrcs = YL.MarkdownReader.discover(base)
         names = {s["name"] for s in msrcs}
         check("discover md 命中 yottamemory-facts", "yottamemory-facts" in names,
@@ -616,6 +630,48 @@ def test_sniff_and_discover():
                             "table": "messages", "col_text": "content"}]}
         srcs = YL.discover_sources(cfg)
         check("配置源登记", any(s["name"] == "myapp" for s in srcs), str(srcs))
+
+
+def test_portable_overrides():
+    with tempfile.TemporaryDirectory() as td:
+        base = Path(td)
+        old_codex = os.environ.get("CODEX_HOME")
+        old_mem = os.environ.get("YOTTA_MEMORY_HOME")
+        old_cfg = os.environ.get("YOTTA_LOGS_CONFIG")
+        try:
+            alt_codex = base / "custom-codex-home"
+            alt_notes = alt_codex / "memories"
+            alt_notes.mkdir(parents=True, exist_ok=True)
+            (alt_notes / "note.md").write_text("# 便携备注\n", encoding="utf-8")
+            os.environ["CODEX_HOME"] = str(alt_codex)
+            msrcs = YL.MarkdownReader.discover(base)
+            codex_src = next(s for s in msrcs if s["name"] == "codex-notes")
+            check("CODEX_HOME 覆盖 codex notes",
+                  Path(codex_src["path"]) == alt_notes, str(codex_src))
+
+            alt_mem = base / "custom-memory-home"
+            os.environ["YOTTA_MEMORY_HOME"] = str(alt_mem)
+            check("YOTTA_MEMORY_HOME 覆盖记忆库",
+                  YL.MarkdownReader._memory_home(base) == alt_mem,
+                  str(YL.MarkdownReader._memory_home(base)))
+
+            cfg = base / "custom-yotta-logs.json"
+            os.environ["YOTTA_LOGS_CONFIG"] = str(cfg)
+            check("YOTTA_LOGS_CONFIG 覆盖配置路径",
+                  YL.default_config_path() == cfg, str(YL.default_config_path()))
+        finally:
+            if old_codex is None:
+                os.environ.pop("CODEX_HOME", None)
+            else:
+                os.environ["CODEX_HOME"] = old_codex
+            if old_mem is None:
+                os.environ.pop("YOTTA_MEMORY_HOME", None)
+            else:
+                os.environ["YOTTA_MEMORY_HOME"] = old_mem
+            if old_cfg is None:
+                os.environ.pop("YOTTA_LOGS_CONFIG", None)
+            else:
+                os.environ["YOTTA_LOGS_CONFIG"] = old_cfg
 
 
 def test_filters_and_scope():
@@ -740,6 +796,7 @@ def main():
         test_markdown_reader()
         test_binary_reader()
         test_sniff_and_discover()
+        test_portable_overrides()
         test_filters_and_scope()
         test_cross_source_scope()
         test_cli_v020(fx)

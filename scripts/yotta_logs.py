@@ -64,7 +64,7 @@ try:
 except Exception:
     pass
 
-VERSION = "0.3.0"
+VERSION = "0.3.1"
 TOOL_NAME = "yotta-logs"
 TOOL_CN = "元史"
 DEFAULT_LIMIT = 50
@@ -743,7 +743,6 @@ class SQLiteReader:
         cands += [
             ("opencode-db", base / ".local" / "share" / "opencode" / "opencode.db"),
             ("opencode-db", base / ".config" / "opencode" / "opencode.db"),
-            ("opencode-db", base / ".OpenCodeData" / "data" / "opencode" / "opencode.db"),
         ]
         seen = set()
         for name, p in cands:
@@ -979,9 +978,8 @@ class MarkdownReader:
             if p.is_dir() and any(x.suffix.lower() in MD_SUFFIXES
                                   for x in p.iterdir()):
                 out.append(_mk_source(name, "memory", "markdown", p))
-        codex_home = os.environ.get("CODEX_HOME")
-        codex_notes = Path(codex_home) / "memories" if codex_home \
-            else base / ".CodexData" / "memories"
+        codex_home = os.environ.get("CODEX_HOME") or str(base / ".codex")
+        codex_notes = Path(codex_home) / "memories"
         if codex_notes.is_dir() and cls._has_md(codex_notes):
             out.append(_mk_source("codex-notes", "note", "markdown", codex_notes,
                                   default_on=False))
@@ -993,7 +991,10 @@ class MarkdownReader:
 
     @staticmethod
     def _memory_home(base):
-        """yotta-memory 记忆库位置：优先读引擎 config.json 的 memory_home。"""
+        """yotta-memory 记忆库位置：优先环境变量，再读引擎 config.json。"""
+        env = os.environ.get("YOTTA_MEMORY_HOME")
+        if env:
+            return Path(env)
         try:
             cfg_p = base / ".yottamemory" / "config.json"
             cfg = json.loads(cfg_p.read_text(encoding="utf-8", errors="replace"))
@@ -1284,11 +1285,23 @@ def sniff_source(path):
 
 # ── 配置兜底 + discover 全源登记 ─────────────────────────────────────────
 
+def default_config_path():
+    """平台无关的默认配置路径；环境变量始终优先。"""
+    env = os.environ.get("YOTTA_LOGS_CONFIG")
+    if env:
+        return Path(env)
+    xdg = os.environ.get("XDG_CONFIG_HOME")
+    if xdg:
+        return Path(xdg) / "yotta-logs" / "config.json"
+    if os.name == "nt":
+        appdata = os.environ.get("APPDATA")
+        if appdata:
+            return Path(appdata) / "yotta-logs" / "config.json"
+    return Path.home() / ".config" / "yotta-logs" / "config.json"
+
+
 def load_config():
-    p = os.environ.get("YOTTA_LOGS_CONFIG")
-    if not p:
-        p = str(Path.home() / ".config" / "yotta-logs" / "config.json")
-    cfg_path = Path(p)
+    cfg_path = default_config_path()
     if not cfg_path.exists():
         return {}
     try:

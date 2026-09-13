@@ -66,7 +66,7 @@
 
 ## 配置（配置兜底）
 
-- 配置文件：`$YOTTA_LOGS_CONFIG` 或 `~/.config/yotta-logs/config.json`；
+- 配置文件：`$YOTTA_LOGS_CONFIG`；未设置时 Windows 用 `%APPDATA%\yotta-logs\config.json`，Unix 用 `$XDG_CONFIG_HOME/yotta-logs/config.json` 或 `~/.config/yotta-logs/config.json`；
 - `default_scope`：默认检索范围（默认 `["session", "memory"]`）；
 - `sources[]`：自定义源（path / format / kind / name / table / col_time / col_role / col_text / col_session / col_title），引擎零改动接入怪格式。
 - 示例见 `agent-formats.md` 第五节。

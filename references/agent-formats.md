@@ -48,8 +48,8 @@
 
 ### 3.3 SQLite（sqlite）
 
-- 代表：opencode（~/.local/share/opencode/opencode.db；本机实测 D:\AI_WorkDir\.OpenCodeData\data\opencode\opencode.db，走 XDG_DATA_HOME / OPENCODE_DATA）、Cursor state.vscdb、Trae、Copilot CLI session-store、CodeBuddy。
-- opencode 实测 schema（2026-08-27，D:\AI_WorkDir\.OpenCodeData\data\opencode\opencode.db）：
+- 代表：opencode（~/.local/share/opencode/opencode.db；XDG_DATA_HOME / OPENCODE_DATA 可覆盖）、Cursor state.vscdb、Trae、Copilot CLI session-store、CodeBuddy。
+- opencode 实测 schema（2026-08-27）：
   - `session(id, project_id, title, cost, tokens_input, tokens_output, time_created[毫秒], ...)`
   - `message(id, session_id, time_created[毫秒], data[JSON: role, time, agent, model, ...])`
   - `part(id, message_id, session_id, time_created[毫秒], data[JSON: type=text/tool/reasoning/step-start...])`——text 部分取 `text` 字段；tool 部分取 `tool` 字段为工具名。
@@ -65,7 +65,7 @@
 
 - 代表：yotta-memory（记忆库 facts / private / archive 下的 *.md）、agent-code、opencode-agent-memory。
 - frontmatter：`type`（FACT/PREF/BOUND/COMMIT → role）、`subject` → title、`statement` → text、`created / updated / date` → time、`tags / confidence / scope / owner / immutable` → meta。
-- 本机实测样本（2026-08-27）：D:\AI_WorkDir\.yottamemory\facts\2026-08-25-0002.md（记忆库位置由 ~/.yottamemory/config.json 的 `memory_home` 决定）。
+- 实测样本路径：`<memory_home>/facts/*.md`。`memory_home` 由 `YOTTA_MEMORY_HOME` 或 `~/.yottamemory/config.json` 决定。
 - frontmatter 解析为零依赖 YAML 子集（key: value / key: [a, b] / 引号），非完整 YAML。
 
 ### 3.6 二进制 / 专有 / 加密（binary）
@@ -83,20 +83,20 @@
 | opencode-sessions | ~/.config/opencode/sessions | jsonl | session | 开 |
 | gemini-sessions | ~/.gemini/sessions | jsonl | session | 开 |
 | agents-sessions | ~/.agents/sessions | jsonl | session | 开 |
-| opencode-db | ~/.local/share/opencode/opencode.db；$XDG_DATA_HOME/opencode/opencode.db；$OPENCODE_DATA；~/.OpenCodeData/data/opencode/opencode.db | sqlite | session | 开 |
+| opencode-db | ~/.local/share/opencode/opencode.db；$XDG_DATA_HOME/opencode/opencode.db；$OPENCODE_DATA | sqlite | session | 开 |
 | cursor-state / code-state | VS Code / Cursor globalStorage 下 state.vscdb（Windows / Linux / macOS） | sqlite | session | 开 |
 | continue-sessions | ~/.continue/sessions、~/.config/continue/sessions | json | session | 开 |
 | yottamemory-facts | 记忆库 facts（memory_home 配置） | markdown | memory | 开 |
 | yottamemory-private | 记忆库 private（memory_home 配置） | markdown | memory | 开 |
 | yottamemory-archive | 记忆库 archive（memory_home 配置） | markdown | memory | 开 |
-| codex-notes | $CODEX_HOME/memories、~/.CodexData/memories | markdown | note | 关（显式开） |
+| codex-notes | $CODEX_HOME/memories、~/.codex/memories | markdown | note | 关（显式开） |
 | aider-history | 当前目录 *.aider.*.md | markdown | session | 开 |
 | windsurf-conv | ~/.codeium/windsurf、~/.windsurf 下 *.pbtxt | binary | log | 关 |
 | 自定义 sources | 配置 sources[]（见下） | 任意 | 任意 | 配置 default_scope |
 
 ## 五、配置兜底（config.json）
 
-路径：`$YOTTA_LOGS_CONFIG` 或 `~/.config/yotta-logs/config.json`。
+路径：`$YOTTA_LOGS_CONFIG`；未设置时使用平台默认位置：Windows = `%APPDATA%\yotta-logs\config.json`，Unix = `$XDG_CONFIG_HOME/yotta-logs/config.json` 或 `~/.config/yotta-logs/config.json`。
 
 ```json
 {

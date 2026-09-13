@@ -162,6 +162,7 @@ bash install.sh --list           # list agents -> default directories
 
 ## Changelog
 
+- v0.3.1 (2026-09-13): Removed machine-specific hardcoded paths; discovery and config now follow environment variables and platform defaults, with regression coverage.
 - v0.3.0 (2026-09-08): Evaluation-driven refinement — added FAQ, hardened installer error handling and exit codes, and added installer tests.
 
 - v0.2.2 (2026-08-29): Install docs alignment — unified four install methods (npx -y @yottameta/yotta-logs --agent/--dir, git clone, GitHub Download ZIP, install.sh --agent/--dir/--list), removed the legacy GitHub-clone installer and global-install (-g) recommendations; bilingual README install section synced to 发布规范 §3.3.1. No functional change.

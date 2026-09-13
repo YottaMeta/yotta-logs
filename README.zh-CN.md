@@ -162,6 +162,7 @@ bash install.sh --list           # 列出智能体 -> 默认目录
 
 ## 更新日志
 
+- v0.3.1（2026-09-13）：移除本机专属硬编码路径；discovery 与配置统一走环境变量和平台默认位置，并补回归覆盖。
 - v0.3.0（2026-09-08）：评测驱动完善——新增常见问题，安装器错误处理与退出码加固，并补齐安装器测试。
 
 - v0.2.2（2026-08-29）：安装方式统一为四方式（对齐发布规范 §3.3.1）——方式一 npx -y @yottameta/yotta-logs --agent / --dir（推荐，走 npm 源）；方式二 git clone；方式三 GitHub Download ZIP；方式四 bash install.sh --agent/--dir/--list。移除旧式 GitHub 克隆安装器与全局安装（-g）推荐；中英 README 安装节同步。无功能变更。

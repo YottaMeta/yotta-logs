@@ -1,3 +1,9 @@
+## v0.3.1 (2026-09-13)
+
+- 修复本机专属路径硬编码：移除本机自定义数据目录候选；opencode 只认 `XDG_DATA_HOME` / `OPENCODE_DATA` / 官方默认路径，Codex notes 只认 `$CODEX_HOME/memories` 或 `~/.codex/memories`。
+- 配置路径改为平台无关：`$YOTTA_LOGS_CONFIG` > Windows `%APPDATA%` > Unix `$XDG_CONFIG_HOME` / `~/.config`。
+- 新增便携覆盖回归：`YOTTA_MEMORY_HOME`、`CODEX_HOME`、`YOTTA_LOGS_CONFIG`；并加本机自定义目录反向断言。
+
 ## v0.3.0 (2026-09-08)
 
 **评测驱动完善**：新增 FAQ，安装器错误处理与测试补齐。
