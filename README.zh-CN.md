@@ -111,8 +111,8 @@ python3 scripts/yotta_logs.py search "部署方案" --dir /path/to/sessions --js
 
 ```text
 # 可选国内加速：npm config set registry https://registry.npmmirror.com
-npx -y @yottameta/yotta-logs --agent <智能体名称>      # 装到指定智能体默认用户级技能目录
-npx -y @yottameta/yotta-logs --dir <智能体的技能目录>  # 指到技能目录本身（如 ~/.codex/skills）
+npx -y @yottameta/yotta-logs@0.3.2 --agent <智能体名称>      # 装到指定智能体默认用户级技能目录
+npx -y @yottameta/yotta-logs@0.3.2 --dir <智能体的技能目录>  # 指到技能目录本身（如 ~/.codex/skills）
 ```
 
 - `--agent <name>` 自动装到该智能体默认用户级目录；`--list` 可查看各智能体默认目录。
@@ -165,7 +165,7 @@ bash install.sh --list           # 列出智能体 -> 默认目录
 - v0.3.1（2026-09-13）：移除本机专属硬编码路径；discovery 与配置统一走环境变量和平台默认位置，并补回归覆盖。
 - v0.3.0（2026-09-08）：评测驱动完善——新增常见问题，安装器错误处理与退出码加固，并补齐安装器测试。
 
-- v0.2.2（2026-08-29）：安装方式统一为四方式（对齐发布规范 §3.3.1）——方式一 npx -y @yottameta/yotta-logs --agent / --dir（推荐，走 npm 源）；方式二 git clone；方式三 GitHub Download ZIP；方式四 bash install.sh --agent/--dir/--list。移除旧式 GitHub 克隆安装器与全局安装（-g）推荐；中英 README 安装节同步。无功能变更。
+- v0.2.2（2026-08-29）：安装方式统一为四方式（对齐发布规范 §3.3.1）——方式一 npx -y @yottameta/yotta-logs@0.3.2 --agent / --dir（推荐，走 npm 源）；方式二 git clone；方式三 GitHub Download ZIP；方式四 bash install.sh --agent/--dir/--list。移除旧式 GitHub 克隆安装器与全局安装（-g）推荐；中英 README 安装节同步。无功能变更。
 
 - v0.2.0（2026-08-27）：多格式通用化——JSONL / 单文件 JSON / SQLite（opencode 等）/ Markdown（记忆 + 自由笔记）/ 二进制五大格式族，统一 Record + 字段别名归一 + 配置兜底，discover 全源登记，新增 --source / --kind / --format 过滤与默认检索范围（会话 + 结构化记忆开、自由笔记 / 二进制日志关）。详见 CHANGELOG.md。
 - v0.1.0（2026-08-27）：首版——零依赖 JSONL 会话日志检索引擎（locate / scan / search / session / stats / tools / version + 默认脱敏 + sessions.json 别名 + 只读）。

@@ -172,6 +172,12 @@ def test_redact():
     check("redact URL 口令",
           YL.redact("https://user:pass@example.com/path")
           == "https://user:***@example.com/path")
+    check("redact 非 http 协议口令",
+          "secret" not in YL.redact("postgres://dbuser:secret@db.internal:5432/app"))
+    check("redact URL 查询串凭据",
+          "abc123" not in YL.redact("https://api.example.com/v1?token=abc123&x=1"))
+    check("redact 查询串非凭据参数保留",
+          "x=1" in YL.redact("https://api.example.com/v1?token=abc123&x=1"))
     check("redact 赋值",
           "token=***" in YL.redact("token=sk-abcdef1234567890x"))
     check("redact 长串",

@@ -64,7 +64,7 @@ try:
 except Exception:
     pass
 
-VERSION = "0.3.1"
+VERSION = "0.3.2"
 TOOL_NAME = "yotta-logs"
 TOOL_CN = "元史"
 DEFAULT_LIMIT = 50
@@ -92,7 +92,14 @@ TITLE_ALIASES = ("title", "subject", "name", "heading")
 # ── 脱敏（默认开启）──────────────────────────────────────────────────────
 
 _URL_RE = re.compile(r"(https?://[^\s\"'<>]+)", re.I)
-_URL_USERPASS_RE = re.compile(r"(https?://)([^/\s:@]+):([^/\s@]+)@", re.I)
+# v0.3.2：URL 内嵌凭据脱敏覆盖所有协议（不只是 http/https），并遮蔽查询串里的
+# 凭据参数 —— 旧行为只处理 http(s)://user:pass@，`postgres://` / `?token=...` 会漏。
+_URL_USERPASS_RE = re.compile(
+    r"([a-z][a-z0-9+.\-]*://)([^/\s:@]*):([^/\s@]+)@", re.I)
+_URL_SECRET_QUERY_RE = re.compile(
+    r"(?i)([?&](?:token|api[_-]?key|apikey|access[_-]?token|auth|authorization|"
+    r"password|passwd|pwd|secret|client[_-]?secret|session|sig|signature)=)"
+    r"[^&\s\"'<>]+")
 _KNOWN_KEY_RE = re.compile(
     r"(?i)\b("
     r"sk-[a-z0-9_-]{8,}"           # OpenAI 类 API key
@@ -120,6 +127,7 @@ def redact(text):
         return text
     text = _PEM_RE.sub("[PRIVATE KEY REDACTED]", text)
     text = _URL_USERPASS_RE.sub(r"\1\2:***@", text)
+    text = _URL_SECRET_QUERY_RE.sub(r"\1***", text)
     chunks = _URL_RE.split(text)  # 奇数下标为 URL，原文保留（路径不算密钥）
     out = []
     for i, chunk in enumerate(chunks):

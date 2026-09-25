@@ -1,6 +1,6 @@
 {
   "name": "@yottameta/yotta-logs",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Yuanshi — a skill for retrieving historical session / memory logs across AI agents: zero-dependency search and analysis of JSONL, JSON, SQLite and Markdown session & memory files (unified Record + field-alias normalization + config fallback), with full source discovery to recall past conversations and parent-session context. Triggers when the user asks about previously discussed content / a parent session / historical context, wants to look up an earlier conclusion, traces a past discussion across sessions, or needs to locate a decision in session logs or memory files. Boundaries: reads only the local agent's own session logs / memory files; never modifies or deletes records; local-only, never uploaded.",
   "license": "MIT",
   "keywords": [

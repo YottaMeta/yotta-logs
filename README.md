@@ -111,8 +111,8 @@ Pick any of the four methods below; the order is the recommended priority. Skill
 
 ```text
 # Optional China mirror: npm config set registry https://registry.npmmirror.com
-npx -y @yottameta/yotta-logs --agent <agent-name>      # install to the agent's default user-level skills dir
-npx -y @yottameta/yotta-logs --dir <your-skills-dir>   # point to the skills dir itself (e.g. ~/.codex/skills)
+npx -y @yottameta/yotta-logs@0.3.2 --agent <agent-name>      # install to the agent's default user-level skills dir
+npx -y @yottameta/yotta-logs@0.3.2 --dir <your-skills-dir>   # point to the skills dir itself (e.g. ~/.codex/skills)
 ```
 
 - `--agent <name>` installs to that agent's default user-level directory; `--list` shows each agent's default directory.
@@ -165,7 +165,7 @@ bash install.sh --list           # list agents -> default directories
 - v0.3.1 (2026-09-13): Removed machine-specific hardcoded paths; discovery and config now follow environment variables and platform defaults, with regression coverage.
 - v0.3.0 (2026-09-08): Evaluation-driven refinement — added FAQ, hardened installer error handling and exit codes, and added installer tests.
 
-- v0.2.2 (2026-08-29): Install docs alignment — unified four install methods (npx -y @yottameta/yotta-logs --agent/--dir, git clone, GitHub Download ZIP, install.sh --agent/--dir/--list), removed the legacy GitHub-clone installer and global-install (-g) recommendations; bilingual README install section synced to 发布规范 §3.3.1. No functional change.
+- v0.2.2 (2026-08-29): Install docs alignment — unified four install methods (npx -y @yottameta/yotta-logs@0.3.2 --agent/--dir, git clone, GitHub Download ZIP, install.sh --agent/--dir/--list), removed the legacy GitHub-clone installer and global-install (-g) recommendations; bilingual README install section synced to 发布规范 §3.3.1. No functional change.
 
 - v0.2.1 (2026-08-27): Bilingual documentation — English README as the GitHub / npm / ClawHub homepage, full Chinese doc moved to README.zh-CN.md, English npm description.
 - v0.2.0 (2026-08-27): Multi-format generalization — JSONL / single-file JSON / SQLite (opencode etc.) / Markdown (memory + free notes) / binary; unified Record + field-alias normalization + config fallback; discover; new --source / --kind / --format filters and default search scope (session + structured memory on, free notes / binary logs off). See CHANGELOG.md.
