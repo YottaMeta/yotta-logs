@@ -64,7 +64,7 @@ try:
 except Exception:
     pass
 
-VERSION = "0.3.4"
+VERSION = "0.3.5"
 TOOL_NAME = "yotta-logs"
 TOOL_CN = "元史"
 DEFAULT_LIMIT = 50
